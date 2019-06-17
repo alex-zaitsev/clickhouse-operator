@@ -143,20 +143,3 @@ func (f *Fetcher) clickHouseQueryTableSizes(data *[][]string) error {
 	return nil
 }
 
-// clickHouseDiskFreeSize requests total data disk and free disk sizes
-// data is a concealed output
-func (f *Fetcher) clickHouseDiskFreeSize(data *[]string) error {
-	conn := f.newConn()
-	if rows, err := conn.Query(heredoc.Doc(queryDiskFreeSQL)); err != nil {
-		return err
-	} else {
-		for rows.Next() {
-			var total_bytes, free_bytes string
-			if err := rows.Scan(&total_bytes, &free_bytes); err == nil {
-				*data = []string{total_bytes, free_bytes}
-			}
-			break // only one row is expected
-		}
-	}
-	return nil
-}
